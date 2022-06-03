@@ -42,7 +42,7 @@ def voltagetracker(voltage,current,interval,duration):#V,A,min,min
         voltdata.append(y)
         timedata.append(z)
         datafile.write(f"{timedata[-1]},{currdata[-1]},{voltdata[-1]}\n")
-        if interval>=60:
+        if duration>=3*60:
             timedata[-1]=round(timedata[-1]/60)
         plt.plot(timedata,voltdata)
         plt.pause(interval)
