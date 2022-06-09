@@ -4,8 +4,8 @@ import os
 import matplotlib.pyplot as plt
 
 
-def tracker(voltage, current, interval, duration):
-    #V,A,min,min
+def tracker(interval, duration):
+    #min,min
     voltdata = []
     currdata = []
     timedata = []
@@ -27,8 +27,9 @@ def tracker(voltage, current, interval, duration):
         os.mkdir(f"C:\\Users\\{os.getlogin()}\\Documents\\VoltageDatafiles")
 
     #find date & time then create file and write header in file
-    timestamp = datetime.now().strftime("%d_%m_%Y_%H_%M_%S")
-    datafile = open(f"{timestamp}.csv", "w")
+    name=input("Type name of file: ")
+    #timestamp = datetime.now().strftime("%d_%m_%Y_%H_%M_%S")
+    datafile = open(f"{name}.csv", "w")
     datafile.write("Time(s), Current(A), Voltage(V)\n")
 
     #Start communicating with device
@@ -41,14 +42,19 @@ def tracker(voltage, current, interval, duration):
     for i in range(int(duration/interval+1)):
         plt.clf()
         x, y, z = Keithley.query(":MEAS:VOLT?").split(",")  #idk why i asks for VOLT and get TIME,VOLT,CURR
+        #Remove + and unit from data
         x, y, z = (float(x[1:-1]), float(y[1:-1]), float(z[1:-1]))
+        #adjusting time data to use it for timepoint from initial start
         if i == 0:
             start = z
         z = round(z-start, 5)
+        #add to lists
         currdata.append(x)
         voltdata.append(y)
         timedata.append(z)
+        #write data to file
         datafile.write(f"{timedata[-1]},{currdata[-1]},{voltdata[-1]}\n")
+        #adjusts time units if duration is too long for seconds to make sense
         if duration >= 180:
             timedata[-1] = round(timedata[-1]/60, 1)
         plt.plot(timedata, voltdata)
@@ -63,4 +69,4 @@ def tracker(voltage, current, interval, duration):
     plt.show()
 
 
-tracker(30, .26, .25, 60,)#Voltage(V),Current(A),Interval length(X), Duration(X)
+tracker(.25, 60,)#Voltage(V),Current(A),Interval length(X), Duration(X)
