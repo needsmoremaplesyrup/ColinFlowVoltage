@@ -4,7 +4,8 @@ import os
 import matplotlib.pyplot as plt
 
 
-def tracker(voltage, current, interval, duration):  #V,A,min,min
+def tracker(voltage, current, interval, duration):
+    #V,A,min,min
     voltdata = []
     currdata = []
     timedata = []
@@ -50,7 +51,7 @@ def tracker(voltage, current, interval, duration):  #V,A,min,min
         datafile.write(f"{timedata[-1]},{currdata[-1]},{voltdata[-1]}\n")
         if duration >= 180:
             timedata[-1] = round(timedata[-1]/60, 1)
-        plt.plot(timedata, voltdata, "o-")
+        plt.plot(timedata, voltdata)
         plt.pause(interval)
 
     datafile.close()
@@ -62,4 +63,4 @@ def tracker(voltage, current, interval, duration):  #V,A,min,min
     plt.show()
 
 
-tracker(30, .26, .1, 1)#Voltage(V),Current(A),Interval length(X), Duration(X)
+tracker(30, .26, .25, 60,)#Voltage(V),Current(A),Interval length(X), Duration(X)
