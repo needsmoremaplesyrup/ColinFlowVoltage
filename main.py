@@ -30,7 +30,7 @@ def tracker(interval, duration):
     name=input("Type name of file: ")
     #timestamp = datetime.now().strftime("%d_%m_%Y_%H_%M_%S")
     datafile = open(f"{name}.csv", "w")
-    datafile.write("Time(s), Voltage(V), Current(A) \n")
+    datafile.write("Time(s), Voltage(V), Current(A)\n")
 
     #Start communicating with device
     rm = visa.ResourceManager()
@@ -69,4 +69,4 @@ def tracker(interval, duration):
     plt.show()
 
 
-tracker(.25, 60,)#Voltage(V),Current(A),Interval length(X), Duration(X)
+tracker(.25, 120)#Voltage(V),Current(A),Interval length(X), Duration(X)
