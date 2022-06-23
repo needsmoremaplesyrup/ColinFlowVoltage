@@ -66,17 +66,23 @@ def tracker(interval, duration):
             plt.pause(interval)
 
     except:
+        datafile.close()
         plt.plot(timedata, voltdata)
+        plt.title('Voltage')
+        plt.xlabel(f'Time ({minsec})')
+        plt.ylabel('Voltage (V)')
         plt.savefig(f"{name}.png")
+        plt.show()
+    else:
+        datafile.close()
+        #select V or A, or have both as subplots side by side
+        plt.title('Voltage')
+        plt.xlabel(f'Time ({minsec})')
+        plt.ylabel('Voltage (V)')
+        #save graph as image
+        plt.savefig(f"{name}.png")
+        plt.show()
 
-    datafile.close()
-    #select V or A, or have both as subplots side by side
-    plt.title('Voltage')
-    plt.xlabel(f'Time ({minsec})')
-    plt.ylabel('Voltage (V)')
-    #save graph as image
-    plt.show()
-    plt.savefig(f"{name}.png")
 
 
-tracker(.25, 120)#Voltage(V),Current(A),Interval length(X), Duration(X)
+tracker(.25, 10)#Interval length(X), Duration(X)
