@@ -66,6 +66,7 @@ def tracker(interval, duration):
             plt.pause(interval)
 
     except:
+        plt.plot(timedata, voltdata)
         plt.savefig(f"{name}.png")
 
     datafile.close()
