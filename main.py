@@ -13,21 +13,6 @@ def tracker():
     x, y, z, start = (0, 0, 0, 0)
     minsec = "sec"
 
-    #Get time values for duration of run and interval between measurements
-    duration=input("Duration (min): ")
-    interval=input("Intervals (min): ")
-    if duration=="":
-        duration=120
-    if interval=="":
-        interval=.25
-    #adjust values into seconds
-    duration = duration*60
-    interval = interval*60
-
-    #if duration is longer than 3 min use minutes rather than seconds in the graphing
-    if duration > 180:
-        minsec = "min"
-
     #check for datafile folder, if it doesn't exist make it
     try:
         os.chdir(f"C:\\Users\\{os.getlogin()}\\Documents\\VoltageDatafiles")
@@ -44,6 +29,23 @@ def tracker():
     #open data file and write headings
     datafile = open(f"{name}.csv", "w")
     datafile.write("Time(s), Voltage(V), Current(A)\n")
+
+
+    #Get time values for duration of run and interval between measurements
+    duration=input("Duration (min): ")
+    interval=input("Intervals (min): ")
+    if duration=="":
+        duration=120
+    if interval=="":
+        interval=.25
+
+    #adjust values into seconds
+    duration = duration*60
+    interval = interval*60
+
+    #if duration is longer than 3 min use minutes rather than seconds in the graphing
+    if duration > 180:
+        minsec = "min"
 
     #input voltage and currents
     voltage=input("Input voltage(V): ")
@@ -64,8 +66,8 @@ def tracker():
 
     try:
         #set parameters on device and turn device on
-        Keithley.write(f":VOLT {voltage}")
-        Keithley.write(f":CURR {current}")
+        Keithley.write(f":VOLT {str(voltage)}")
+        Keithley.write(f":CURR {str(current)}")
         Keithley.write(":INIT:CONT ON")
         for i in range(int(duration/interval+1)):
             plt.clf()
