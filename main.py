@@ -4,46 +4,69 @@ import os
 import matplotlib.pyplot as plt
 
 
-def tracker(interval, duration):
-    #min,min
+
+def tracker():
+    #data variables
     voltdata = []
     currdata = []
     timedata = []
     x, y, z, start = (0, 0, 0, 0)
     minsec = "sec"
 
-#Convert minutes into seconds
+    #Get time values for duration of run and interval between measurements
+    duration=input("Duration (min): ")
+    interval=input("Intervals (min): ")
+    if duration=="":
+        duration=120
+    if interval=="":
+        interval=.25
+    #adjust values into seconds
     duration = duration*60
     interval = interval*60
 
-    #labels
+    #if duration is longer than 3 min use minutes rather than seconds in the graphing
     if duration > 180:
         minsec = "min"
 
-    #check for file folder, if it doesn't exist make it
+    #check for datafile folder, if it doesn't exist make it
     try:
         os.chdir(f"C:\\Users\\{os.getlogin()}\\Documents\\VoltageDatafiles")
     except:
         os.mkdir(f"C:\\Users\\{os.getlogin()}\\Documents\\VoltageDatafiles")
 
-    #find date & time then create file and write header in file
+    #name data file, if no name entered use date and time
     name=input("Type name of file: ")
     if(name==""):
         name=datetime.now().strftime("%d_%m_%Y_%H_%M_%S")
     else:
         pass
-    #timestamp = datetime.now().strftime("%d_%m_%Y_%H_%M_%S")
+
+    #open data file and write headings
     datafile = open(f"{name}.csv", "w")
     datafile.write("Time(s), Voltage(V), Current(A)\n")
+
+    #input voltage and currents
+    voltage=input("Input voltage(V): ")
+    current=input("Input current(A): ")
+    if voltage=="":
+        voltage=30
+    if current=="":
+        current=.26
 
     #Start communicating with device
     rm = visa.ResourceManager()
     Keithley = rm.open_resource('USB0::0x05E6::0x2280::4386872::INSTR')
     Keithley.read_termination = '\n'
     Keithley.write_termination = '\n'
+
+    #check connections
     Keithley.query("*IDN?")
 
     try:
+        #set parameters on device and turn device on
+        Keithley.write(f":VOLT {voltage}")
+        Keithley.write(f":CURR {current}")
+        Keithley.write(":INIT:CONT ON")
         for i in range(int(duration/interval+1)):
             plt.clf()
             x, y, z = Keithley.query(":MEAS:VOLT?").split(",")  #idk why i asks for VOLT and get TIME,VOLT,CURR
@@ -66,23 +89,25 @@ def tracker(interval, duration):
             plt.pause(interval)
 
     except:
-        datafile.close()
+        #if error occurs, turn power supply off, save the graph
+        Keithley.write(":OUTP OFF")
+        Keithley.write(":VOLT 0")
+        Keithley.write(":CURR 0")
         plt.plot(timedata, voltdata)
-        plt.title('Voltage')
-        plt.xlabel(f'Time ({minsec})')
-        plt.ylabel('Voltage (V)')
         plt.savefig(f"{name}.png")
-        plt.show()
-    else:
-        datafile.close()
-        #select V or A, or have both as subplots side by side
-        plt.title('Voltage')
-        plt.xlabel(f'Time ({minsec})')
-        plt.ylabel('Voltage (V)')
-        #save graph as image
-        plt.savefig(f"{name}.png")
-        plt.show()
+
+    datafile.close()
+    ##turn power supply off
+    Keithley.write(":OUTP OFF")
+    Keithley.write(":VOLT 0")
+    Keithley.write(":CURR 0")
+    ##select V or A, or have both as subplots side by side
+    plt.title('Voltage')
+    plt.xlabel(f'Time ({minsec})')
+    plt.ylabel('Voltage (V)')
+    #save graph as image
+    plt.show()
+    plt.savefig(f"{name}.png")
 
 
-
-tracker(.25, 10)#Interval length(X), Duration(X)
+tracker()
