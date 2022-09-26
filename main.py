@@ -44,6 +44,17 @@ def tracker():
 # if duration is longer than 3 min use minutes rather than seconds in the graphing
     if duration > 180:
         minsec = "min"
+
+#CURRENT OR VOLTAGE?
+    dattype=input("V or C?")
+    if dattype=="V":
+        dattype=0
+    elif dattype=="C":
+        dattype=1
+    else:
+        print("only V or C please, defaulting to Voltage")
+        dattype=0
+
     '''
 # input voltage and currents
     voltage = input("Input voltage(V): ")
@@ -89,7 +100,10 @@ def tracker():
             # adjusts time units if duration is too long for seconds to make sense
             if duration >= 180:
                 timedata[-1] = round(timedata[-1]/60, 1)
-            plt.plot(timedata, voltdata)
+            if dattype:
+                plt.plot(timedata, currdata)
+            else:
+                plt.plot(timedata, voltdata)
             plt.savefig(f"{name}.png")
             plt.pause(interval)
 
@@ -100,7 +114,10 @@ def tracker():
         Keithley.write(":VOLT 0")
         Keithley.write(":CURR 0")
         '''
-        plt.plot(timedata, voltdata)
+        if dattype:
+            plt.plot(timedata, currdata)
+        else:
+            plt.plot(timedata, voltdata)
         plt.savefig(f"{name}.png")
 
     datafile.close()
@@ -110,11 +127,15 @@ def tracker():
     Keithley.write(":VOLT 0")
     Keithley.write(":CURR 0")
     '''
-    plt.plot(timedata, voltdata)
-    # select V or A, or have both as subplots side by side
-    plt.title('Voltage')
+    if dattype:
+        plt.plot(timedata, currdata)
+        plt.title('Current')
+        plt.ylabel('Current (A)')
+    else:
+        plt.plot(timedata, voltdata)
+        plt.title('Voltage')
+        plt.ylabel('Voltage (V)')
     plt.xlabel(f'Time ({minsec})')
-    plt.ylabel('Voltage (V)')
     plt.savefig(f"{name}.png")
     # save graph as image
     plt.show()
