@@ -4,6 +4,7 @@ import os
 import time
 import matplotlib.pyplot as plt
 
+#recursive function used to rename files
 def namecheck(name,namelist,iter):
     iter+=1
     newname = name + f"({iter})"
@@ -12,9 +13,9 @@ def namecheck(name,namelist,iter):
     else:
         return(newname)
 
-
+# main function
 def tracker():
-    # data variables
+# data variables
     voltdata = []
     currdata = []
     timedata = []
@@ -29,10 +30,10 @@ def tracker():
 
 # name data file, if no name entered use date and time
     namelist=os.listdir(directory)
-    print(namelist)
     name = input("Type name of file: ")
     if name == "":
         name = datetime.now().strftime("%d_%m_%Y_%H_%M_%S")
+# check name to make sure it isn't overwriting anything if it is it'll ask what to do
     if name+".csv" in namelist:
         overwrite = input(f"File named {name} found. Overwrite?(Y/N): ")
         if overwrite == "Y" or "y" or "yes" or "YES":
@@ -43,6 +44,7 @@ def tracker():
 # open data file and write headings
     datafile = open(f"{name}.csv", "w")
     datafile.write("Time(s), Voltage(V), Current(A)\n")
+    rawfile=open("rawfile.txt","w")
 
 # Get time values for duration of run and interval between measurements
     duration = input("Duration (min): ")
@@ -71,6 +73,8 @@ def tracker():
         dattype=0
 
     '''
+leftovers from being able to turn on power supply and control current/voltage 
+i don't trust people + it's better to run it manually to check that everything is working right
 # input voltage and currents
     voltage = input("Input voltage(V): ")
     current = input("Input current(A): ")
@@ -81,6 +85,8 @@ def tracker():
     voltage=float(voltage)
     current=float(current)
     '''
+############**********########## YOU NEED TO PUT YOUR OWN ADDRESS IN INSTEAD OF 'USB0::0x05E6::0x2280::4386872::INSTR'
+###########go to https://pyvisa.readthedocs.io/en/1.12.0/index.html and run the code block there to identify the address of your power supply
 # Start communicating with device
     rm = visa.ResourceManager()
     Keithley = rm.open_resource('USB0::0x05E6::0x2280::4386872::INSTR')
@@ -97,10 +103,12 @@ def tracker():
         #Keithley.write(f":VOLT {str(voltage)}")
         #Keithley.write(f":CURR {str(current)}")
         #Keithley.write(":INIT:CONT ON")
+    # main data sample loop
         for i in range(int(duration/interval+1)):
             plt.clf()
             time.sleep(1)
-            x, y, z = Keithley.query(":MEAS:VOLT?").split(",")  # idk why i asks for VOLT and get TIME,VOLT,CURR
+            x, y, z = Keithley.query(":MEAS:VOLT?").split(",")  # idk why i asks for VOLT and get TIME,VOLT,CURR********* check order
+            rawfile.write(f"time: {datetime.now()}, curr: {x}, volt: {y}, time: {z}\n")
             # Remove + and unit from data
             x, y, z = (float(x[1:-1]), float(y[1:-1]), float(z[1:-1]))
             # adjusting time data to use it for timepoint from initial start
