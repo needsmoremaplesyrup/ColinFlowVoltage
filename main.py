@@ -1,7 +1,16 @@
 import pyvisa as visa
 from datetime import datetime
 import os
+import time
 import matplotlib.pyplot as plt
+
+def namecheck(name,namelist,iter):
+    iter+=1
+    newname = name + f"({iter})"
+    if newname+".csv" in namelist:
+        return(namecheck(name,namelist,iter))
+    else:
+        return(newname)
 
 
 def tracker():
@@ -11,19 +20,25 @@ def tracker():
     timedata = []
     x, y, z, start = (0, 0, 0, 0)
     minsec = "sec"
-
+    directory=f"C:\\Users\\{os.getlogin()}\\Documents\\VoltageDatafiles"
 # check for datafile folder, if it doesn't exist make it
     try:
-        os.chdir(f"C:\\Users\\{os.getlogin()}\\Documents\\VoltageDatafiles")
+        os.chdir(directory)
     except:
-        os.mkdir(f"C:\\Users\\{os.getlogin()}\\Documents\\VoltageDatafiles")
+        os.mkdir(directory)
 
 # name data file, if no name entered use date and time
+    namelist=os.listdir(directory)
+    print(namelist)
     name = input("Type name of file: ")
     if name == "":
         name = datetime.now().strftime("%d_%m_%Y_%H_%M_%S")
-    else:
-        pass
+    if name+".csv" in namelist:
+        overwrite = input(f"File named {name} found. Overwrite?(Y/N): ")
+        if overwrite == "Y" or "y" or "yes" or "YES":
+            pass
+        if overwrite == "N" or "n" or "no" or "NO" or "":
+            name=namecheck(name,namelist,0)
 
 # open data file and write headings
     datafile = open(f"{name}.csv", "w")
@@ -84,6 +99,7 @@ def tracker():
         #Keithley.write(":INIT:CONT ON")
         for i in range(int(duration/interval+1)):
             plt.clf()
+            time.sleep(1)
             x, y, z = Keithley.query(":MEAS:VOLT?").split(",")  # idk why i asks for VOLT and get TIME,VOLT,CURR
             # Remove + and unit from data
             x, y, z = (float(x[1:-1]), float(y[1:-1]), float(z[1:-1]))
