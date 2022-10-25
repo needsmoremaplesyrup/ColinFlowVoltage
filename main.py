@@ -161,7 +161,10 @@ i don't trust people + it's better to run it manually to check that everything i
         plt.plot(timedata, voltdata)
         plt.title('Voltage')
         plt.ylabel('$\it{Voltage} (V)$',fontsize=20)
-    plt.xlabel(f'Time ({minsec})')
+    plt.xlabel('$\it{Time} $'+str(minsec))
+    plt.xticks(fontsize=18)
+    plt.yticks(fontsize=18)
+    plt.title("")
     plt.savefig(f"{name}.png")
     # save graph as image
     plt.show()
