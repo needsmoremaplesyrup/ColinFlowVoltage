@@ -129,6 +129,7 @@ i don't trust people + it's better to run it manually to check that everything i
                 plt.plot(timedata, currdata)
             else:
                 plt.plot(timedata, voltdata)
+            plt.figure(figsize=(5,3.2))
             plt.savefig(f"{name}.png")
             plt.pause(interval)
 
@@ -155,11 +156,11 @@ i don't trust people + it's better to run it manually to check that everything i
     if dattype:
         plt.plot(timedata, currdata)
         plt.title('Current')
-        plt.ylabel('Current (A)')
+        plt.ylabel('$\it{Current} (A)$',fontsize=20)
     else:
         plt.plot(timedata, voltdata)
         plt.title('Voltage')
-        plt.ylabel('Voltage (V)')
+        plt.ylabel('$\it{Voltage} (V)$',fontsize=20)
     plt.xlabel(f'Time ({minsec})')
     plt.savefig(f"{name}.png")
     # save graph as image
