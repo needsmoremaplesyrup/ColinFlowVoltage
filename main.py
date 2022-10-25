@@ -107,11 +107,12 @@ i don't trust people + it's better to run it manually to check that everything i
         for i in range(int(duration/interval+1)):
             plt.clf()
             time.sleep(1)
-            x, y, z = Keithley.query(":MEAS:VOLT?").split(",")  # idk why i asks for VOLT and get TIME,VOLT,CURR********* check order
+            x, y, z = Keithley.query(":MEAS:VOLT?").split(",")  # idk why i asks for VOLT and get TIME,VOLT,CURR
             rawfile.write(f"time: {datetime.now()}, curr: {x}, volt: {y}, time: {z}\n")
             # Remove + and unit from data
             x, y, z = (float(x[1:-1]), float(y[1:-1]), float(z[1:-1]))
             # adjusting time data to use it for timepoint from initial start
+            z=time.time()
             if i == 0:
                 start = z
             z = round(z-start, 5)
