@@ -126,10 +126,9 @@ i don't trust people + it's better to run it manually to check that everything i
             if duration >= 180:
                 timedata[-1] = round(timedata[-1]/60, 1)
             if dattype:
-                plt.plot(timedata, currdata)
+                plt.plot(timedata, currdata,figsize=(5,3.2))
             else:
-                plt.plot(timedata, voltdata)
-            plt.figure(figsize=(5,3.2))
+                plt.plot(timedata, voltdata,figsize=(5,3.2))
             plt.savefig(f"{name}.png")
             plt.pause(interval)
 
@@ -141,9 +140,9 @@ i don't trust people + it's better to run it manually to check that everything i
         Keithley.write(":CURR 0")
         '''
         if dattype:
-            plt.plot(timedata, currdata)
+            plt.plot(timedata, currdata,figsize=(5,3.2))
         else:
-            plt.plot(timedata, voltdata)
+            plt.plot(timedata, voltdata, figsize=(5,3.2))
         plt.savefig(f"{name}.png")
 
     datafile.close()
@@ -154,11 +153,11 @@ i don't trust people + it's better to run it manually to check that everything i
     Keithley.write(":CURR 0")
     '''
     if dattype:
-        plt.plot(timedata, currdata)
+        plt.plot(timedata, currdata,figsize=(5,3.2))
         plt.title('Current')
         plt.ylabel('$\it{Current} (A)$',fontsize=20)
     else:
-        plt.plot(timedata, voltdata)
+        plt.plot(timedata, voltdata,figsize=(5,3.2))
         plt.title('Voltage')
         plt.ylabel('$\it{Voltage} (V)$',fontsize=20)
     plt.xlabel('$\it{Time} $'+str(minsec))
